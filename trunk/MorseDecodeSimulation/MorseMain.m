@@ -6,7 +6,9 @@
 % TODO: Convert from pulse magnitudes to Text (string)
 %
 % Author: Sean Winfree
-% Date: 9-28-2010
+% Date: 09-28-2010 - Orignial Release
+% Date: 10-15-2010 - Added simplification of complex number to demonstrate
+%                    how to implement in a uProcessor
 
 % Define Simulation Constants
 close all; clear all; clc;
@@ -20,7 +22,7 @@ PLOT=0;
 %    sampling frequency
 fsig=700;  %Rockmite has; 600 to 830 Hz, or 230 Hz Bandwidth
 sText = 'N2XE LABORATORY RULES';
-SNR = -4; % some special scaling is done behind the scenes on this, input though is average SNR  
+SNR = 2; % some special scaling is done behind the scenes on this, input though is average SNR  
 % fsample = 11.025e3; 
 fsample = fsig*3; 
 WPM = 12; 
@@ -58,11 +60,22 @@ end
 %   A final window filter is used to enhance/stabilize the magnitude of the
 %   pulses.
 %
-Mixer = exp(-1i*2*pi*fsig/fsample .* (0:L-1)).'; % real + imaginary
 
-signal = xn.*Mixer;
+%% Transform
+Mixer = exp(-1i*2*pi*fsig/fsample .* (0:L-1)).'; % real + imaginary
+signal = xn.*Mixer;  
+
+%% Transform - simplified.
+% does the same as above but broken out into multiple parts to make it
+% easier to understand for uProcessor implementation.
+mixerI=sin(2*pi*fsig/fsample .* (0:L-1))';
+mixerR=cos(2*pi*fsig/fsample .* (0:L-1))';
+sigR = xn.*mixerR;
+sigI = xn.*mixerI;
+signal = complex(sigR,sigI);
 
 if(PLOT); figure; plot(2*abs(fft(signal))); end;
+
 %% Low Pass Filter
 % use fdesign to build a low pass filter.
 d=fdesign.lowpass('Fp,Fst,Ap,Ast',50,100,1,80,fsample);
@@ -72,12 +85,20 @@ hd = design(d);
 % fvtool(hd);  % shows frequency response of the designed filter
 % save hd
 % load hd % UNCOMMENT this if to use saved filter coefficients--> hd.mat 
-fxn = filter(hd,double(signal));
+% fxn = filter(hd,double(signal));
+fxn = filter(hd,(signal));
+
+%% Low Pass Filter - Simplified
+% filter both the complex and real number then calc magnitude of results
+fxnI = filter(hd,sigI);  % filter imaginary component
+fxnR = filter(hd,sigR);  % filter real component
+fxn = sqrt(fxnR.^2 + fxnI.^2); % calculate magnitude of Img & Real data 
+% fxn is strictly real now.
 
 %% Additional Filtering
 Nw = 100;
 mavgwindow = ones(1,Nw)/Nw; % essentially average over Nw = 100 size window
-fxn = filter(mavgwindow,1,abs(fxn)); 
+fxn = filter(mavgwindow,1,abs(fxn)); % averging window cleans up results
 
 %% Plots
 % abs is the magnitude of complex numbers
@@ -107,6 +128,9 @@ end
 fxn_out = real(fxn);
 
 %% DECODER to string
+% compare the resulting decode with the original signal
+%
+%% Decode result
 Ts = 1/fsample;
 [r,t,f] = mag_detect(fxn_out, -23, 1);
 
@@ -139,7 +163,7 @@ fprintf('\n');
 dit_dah_string=chars;
 % outstring =  demorse_btc(dit_dah_string{1});
 
-
+%% Decode the Original (clean) Signal
 [r,t,f] = mag_detect(cleanxn, -23, 1);
 widths = (f-r);
 midpoint = (max(widths)+min(widths))/2;
