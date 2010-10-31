@@ -19,7 +19,7 @@ function [xn cleanxn] = encodeMorse(varargin)
 if(nargin==0)
    fsig=700;  %Rockmite has; 600 to 830 Hz, or 230 Hz Bandwidth
    sText = 'N2XE LABORATORY RULES';
-   SNR = 5; % some special scaling is done behind the scenes on this, input though is average SNR  
+   SNR = 2; % some special scaling is done behind the scenes on this, input though is average SNR  
    fsample = 11.025e3; 
    WPM = 12; 
 else
