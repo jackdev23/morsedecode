@@ -3,7 +3,7 @@
 % transformed and filtered to enhance the constant wave pulse signal of
 % morse code. 
 % 
-% TODO: Convert from pulse magnitudes to Text (string)
+% Convert from pulse magnitudes to Text (string)
 %
 % Author: Sean Winfree
 % Date: 09-28-2010 - Orignial Release
@@ -12,7 +12,7 @@
 
 % Define Simulation Constants
 close all; clear all; clc;
-PLOT=0;
+PLOT=1;
 
 %% Create Morse Code 
 % text: text to be encoded 
@@ -31,18 +31,17 @@ L = length(xn);
 
 if(PLOT)
     %  Stimulus code to test the Morse Decoder     
-     figure; plot(xn); title('Noisy Morse'); xlabel('samples');
-    % FFT of xn   
+    figure; plot(xn); title('Noisy Morse'); xlabel('samples');      
+    % FFT
     NFFT = 2^nextpow2(L);
-    Y = fft(xn,NFFT)/L;
+    Yorig = fft(xn,NFFT)/L;
     Fs=fsample;
-    % f = Fs/2*linspace(0,1,NFFT/2);
-     f = Fs/2*linspace(0,1,NFFT);
+    f = fftshift(Fs*linspace(0,1,NFFT));
+    f(f>Fs/2)=f((f>(Fs/2)))-Fs;
     figure;
-    % plot(f,2*abs(Y(1:NFFT/2)));
-    plot(f,2*abs(Y)); % plot the whole freq domain
+    plot((f),2*abs(fftshift(Yorig))); % plot the whole freq domain
     title('Frequency Response of Morse Code - CW');
-    xlabel('freq');
+    xlabel('Freq');ylabel('Amp');
 end
 %
 %
@@ -50,7 +49,7 @@ end
 %% Morse Decoder 
 % [yn] = decodeMorse(xn,fosc)
 %
-% Hilbert Transform
+% Hilbert - Frequency Shift Transform
 %   Shift/Move the 700Hz signal to base-band (DC) 
 %   by multipling by a complex sinusoid
 % Low Pass Filter
@@ -61,11 +60,11 @@ end
 %   pulses.
 %
 
-%% Transform
+%% Frequency Shift Transform
 Mixer = exp(-1i*2*pi*fsig/fsample .* (0:L-1)).'; % real + imaginary
 signal = xn.*Mixer;  
 
-%% Transform - simplified.
+%% Frequency Shift Transform - simplified.
 % does the same as above but broken out into multiple parts to make it
 % easier to understand for uProcessor implementation.
 mixerI=sin(2*pi*fsig/fsample .* (0:L-1))';
@@ -74,19 +73,24 @@ sigR = xn.*mixerR;
 sigI = xn.*mixerI;
 signal = complex(sigR,sigI);
 
-if(PLOT); figure; plot(2*abs(fft(signal))); end;
+%% Plot frequency results of Shift
+if(PLOT)
+    Yshift = fft(signal,NFFT)/L;
+    figure; plot(f,2*abs(fftshift(Yshift))); 
+    title('Frequency Response of Shifted Morse Code - CW');
+    xlabel('Freq');ylabel('Amp');
+end
 
 %% Low Pass Filter
 % use fdesign to build a low pass filter.
 d=fdesign.lowpass('Fp,Fst,Ap,Ast',50,100,1,80,fsample);
 %  designmethods(d);  % gives details on the designed filter
 % hd = design(d,'butter','matchexactly','passband'); 
-hd = design(d); 
+hd = design(d); % Just designing the filter based on above criteria
 % fvtool(hd);  % shows frequency response of the designed filter
-% save hd
+% save hd % you can save the coefficients to speed it up
 % load hd % UNCOMMENT this if to use saved filter coefficients--> hd.mat 
-% fxn = filter(hd,double(signal));
-fxn = filter(hd,(signal));
+% fxn = filter(hd,(signal)); % Filter the signal
 
 %% Low Pass Filter - Simplified
 % filter both the complex and real number then calc magnitude of results
@@ -95,16 +99,21 @@ fxnR = filter(hd,sigR);  % filter real component
 fxn = sqrt(fxnR.^2 + fxnI.^2); % calculate magnitude of Img & Real data 
 % fxn is strictly real now.
 
-%% Additional Filtering
+%% Window Averaging Filter - Additional Filtering
 Nw = 100;
 mavgwindow = ones(1,Nw)/Nw; % essentially average over Nw = 100 size window
+fxn_before_avg=fxn;
 fxn = filter(mavgwindow,1,abs(fxn)); % averging window cleans up results
 
-%% Plots
-% abs is the magnitude of complex numbers
-% mag = 20* log10(abs(fxn));
-
+%% PLOTTING
 if(PLOT)
+    %% Compare before/after Averaging Filter
+    figure; plot(fxn_before_avg,'r'); hold on;
+    plot(fxn,'g'); 
+    title('Filtered Morse Code - CW');xlabel('Samples');ylabel('Amplitude');
+    legend('x[n] after FIR Filter', 'x[n] after Window Average Filter');
+    hold off;
+    
     figure;plot(20*log10(abs((fxn)))); title('Morse Pulse Envelope');
     % Plot orginial Morse Code Pulses over Decoded
     figure;plot((abs((fxn)))*2); 
@@ -112,25 +121,34 @@ if(PLOT)
     title('Performance of Decoded Morse'); xlabel('Samples'); 
     ylabel('Amplitude');
     legend('Decoded Morse', 'Orginal Morse');hold off;
+    %% FFT of Shifted and Filtered Signal
+    Fs=fsample;
+    f = fftshift(Fs*linspace(0,1,NFFT));
+    f(f>Fs/2)=f((f>(Fs/2)))-Fs;    
+    Y = fft(fxn,NFFT)/L;
+    figure; plot(f,2*abs(fftshift(Y(1:NFFT))));
+    title('Frequency Response of Shifted & Filtered Morse Code - CW');
+    xlabel('Freq');ylabel('Amp');
+    
+    %% Subplot of frequency effects throughout algorithm
+    subplot(1,3,1);  % Original Signal 
+    plot(f,2*abs(fftshift(Yorig(1:NFFT))));
+    xlabel('Freq');ylabel('Amp');
+    title('Morse Code - CW');
+    subplot(1,3,2);   % After Frequency Shift
+    plot(f,2*abs(fftshift(Yshift(1:NFFT))));
+    xlabel('Freq');ylabel('Amp');
+    title('Shifted Morse Code - CW');
+    subplot(1,3,3);   % After Filtering
+    plot(f,2*abs(fftshift(Y(1:NFFT))));
+    xlabel('Freq');ylabel('Amp');
+    title('Shifted & Filtered Morse Code - CW');
 end
-
-%% FFT of fxn
-% L = length(fxn);
-% NFFT = 2^nextpow2(L);
-% Y = fft(fxn,NFFT)/L;
-% Fs=fsample;
-% f = Fs/2*linspace(0,1,NFFT);
-% figure; plot(f,2*abs(Y(1:NFFT)));
-% title('Frequency Response of Filtered Morse Code - CW');
-% xlabel('freq');
-
-
-fxn_out = real(fxn);
 
 %% DECODER to string
 % compare the resulting decode with the original signal
 %
-%% Decode result
+%% Decode result of Algorithm
 Ts = 1/fsample;
 [r,t,f] = mag_detect(fxn_out, -23, 1);
 
@@ -189,3 +207,11 @@ for i = 1:length(symbols)
 end
 fprintf('\n');
 dit_dah_string=chars;
+
+
+
+% Notes
+% abs is the magnitude of complex numbers
+% mag = 20* log10(abs(fxn));
+% 
+% EOF
