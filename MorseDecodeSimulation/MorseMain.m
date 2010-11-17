@@ -150,7 +150,7 @@ end
 %
 %% Decode result of Algorithm
 Ts = 1/fsample;
-[r,t,f] = mag_detect(fxn_out, -23, 1);
+[r,t,f] = mag_detect(fxn, -23, 1);
 
 widths = (f-r);
 midpoint = (max(widths)+min(widths))/2;
