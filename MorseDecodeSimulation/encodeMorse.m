@@ -113,6 +113,10 @@ end
 
 r = awgn(output,SNR,'measured');
 
+% save('2dB_noise_r', 'r'); % changed the name to specific setting
+% load('2dB_noise_r', 'r'); % dylan - uncomment to get the noise *.mat file
+% imported into workspace.
+
 %% modulate
 y2 = y(1:length(r));
 out = y2.*r;
