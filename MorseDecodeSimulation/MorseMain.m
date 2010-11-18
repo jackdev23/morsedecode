@@ -12,7 +12,7 @@
 
 % Define Simulation Constants
 close all; clear all; clc;
-PLOT=1;
+PLOT=0;
 
 %% Create Morse Code 
 % text: text to be encoded 
@@ -83,7 +83,8 @@ end
 
 %% Low Pass Filter
 % use fdesign to build a low pass filter.
-d=fdesign.lowpass('Fp,Fst,Ap,Ast',50,100,1,80,fsample);
+% d=fdesign.lowpass('Fp,Fst,Ap,Ast',50,100,1,80,fsample);
+d=fdesign.lowpass('Fp,Fst,Ap,Ast',110,180,1,80,fsample);
 %  designmethods(d);  % gives details on the designed filter
 % hd = design(d,'butter','matchexactly','passband'); 
 hd = design(d); % Just designing the filter based on above criteria
@@ -91,6 +92,22 @@ hd = design(d); % Just designing the filter based on above criteria
 % save hd % you can save the coefficients to speed it up
 % load hd % UNCOMMENT this if to use saved filter coefficients--> hd.mat 
 % fxn = filter(hd,(signal)); % Filter the signal
+
+%% Convert filter coeffs
+a = hd.Numerator;
+q15_coefs=round(a*2^15);  % for 16 size coeffs. Then negitive numbers get the 16 bit value.
+%   if negitive number
+% strvcat('1',dec2bin(abs(-6),15)')'
+for i=1:length(a)
+   if(q15_coefs(i) < 0)
+       bin_str = strvcat('1',dec2bin(abs(q15_coefs(i)),15)')';
+   else
+       bin_str= dec2bin(q15_coefs(i));
+   end
+   dec = bin2dec(bin_str);
+   hex_str{i,:} =  dec2hex(dec);
+   
+end
 
 %% Low Pass Filter - Simplified
 % filter both the complex and real number then calc magnitude of results
