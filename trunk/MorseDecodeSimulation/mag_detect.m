@@ -23,9 +23,9 @@ Ts = 1/11000;
 Tunit = 1.2/13 * 1/Ts;
 
 for s = 1:length(sig.m)
-    if s > N
+    if s > N  % wait until N samples have been gathered
         temp_fm = sum(sig.m(s-N:s))./N;
-        sig.fm(s) = db(temp_fm);
+        sig.fm(s) = db(temp_fm); % convert averaged signal to dB. must have a least N samples per dit to work. 
     end
     
     switch state
