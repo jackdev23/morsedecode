@@ -120,10 +120,12 @@ int main (void)
 
    	//Setup ADC for 2100Hz sampling. Handeled by interrupt routine
    	adc_init();
-   	FIRStructInit( 	&pFilterI,
+   	
+    /*FIRStructInit( 	&pFilterI,
 					100,  // num of coeffs
 					);
-   	
+   	*/
+	uart_init();
 
    //TODO: Setup Decoder - this only partially complete
   // decoder_init(12,12); //
