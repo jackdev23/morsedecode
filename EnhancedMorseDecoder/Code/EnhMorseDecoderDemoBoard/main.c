@@ -47,47 +47,6 @@ _FWDT(FWDTEN_OFF);  							// disable watchdog for debug
 #define NUM_SAMPLES 100 
 volatile int debug_cnt = 0;
 
-// Filters from dsp.h
-//extern FIRStruct pFilterI;
-//extern FIRStruct fir150FilterI;
-//extern FIRStruct fir150FilterQ;
-
-extern fractional* FIRDecimate (        /* Decimation by R:1 rate */
-   int numSamps,                        /* number of _output_ samples (N) */
-                                        /* N = R*p (p integer) */
-   fractional* dstSamps,                /* ptr to output samples */
-                                        /* (y[n], 0 <= n < N) */
-   fractional* srcSamps,                /* ptr to input samples */
-                                        /* (x[n], 0 <= n < N*R) */
-   FIRStruct* filter,                   /* filter structure: */
-                                        /* number of coefficients in filter */
-                                        /* same as number of delay elements */
-                                        /* M = R*q (q integer) */
-                                        /* (h[m], 0 <= m < M) */
-                                        /* (d[m], 0 <= m < M) */
-   int rate                             /* rate of decimation R (to 1) */
-
-                                        /* returns dstSamps */
-);
-
-extern fractional* FIR (                /* FIR filtering */
-   int numSamps,                        /* number of input samples (N) */
-   fractional* dstSamps,                /* ptr to output samples */
-                                        /* (y[n], 0 <= n < N) */
-   fractional* srcSamps,                /* ptr to input samples */
-                                        /* (x[n], 0 <= n < N) */
-   FIRStruct* filter                    /* filter structure: */
-                                        /* number of coefficients in filter */
-                                        /* same as number of delay elements */
-                                        /* (h[m], 0 <= m < M, an increasing */
-                                        /*  circular buffer) */
-                                        /* (d[m], 0 <= m < M, an increasing */
-                                        /*  circular buffer) */
-
-                                        /* returns dstSamps */
-);
-
-
 int main (void)
 {
 	//For DSC-Starter Kit only, Change for EMD device.
@@ -118,7 +77,8 @@ int main (void)
 
    	//Setup ADC for 2100Hz sampling. Handeled by interrupt routine
    	adc_init();
-   	
+
+	// Initialize FIR Filter   	
 	FIRStruct pFilter;
     FIRStructInit( 	&pFilter,
 					NCOEFFS,  // num of coeffs
@@ -127,14 +87,13 @@ int main (void)
 					z   // delay
 					);
    	
+	FIRDelayInit(&pFilter);  // initialize the delay line 
 
+	// Forever
 	while(1)
 	{
 		i++;
 		debug_cnt++;
-
-
-		//TODO: Call the decoder once we have enough samples to decode a dit/dah 
 	}
 
 }
