@@ -5,6 +5,9 @@
  *      Author: Dylan Thorner
  */
 
+#include "decoder_dsp.h"
+
+
 /******************************************************************************
  * Name: decoder_dsp
  * Inputs: fractional sample - the sample that was taken by the ADC
@@ -15,29 +18,33 @@
  *****************************************************************************/
 fractional decoder_dsp(fractional sample){
 
-	const float * cos_ptr = cos_vals; // these are pointers use to access the array of sin and cos values
-	const float * sin_ptr = sin_vals; // pointer (that can be changed) to a float (that cannot be changed)
+	int index = 0; // index into the sin_vals and cos_vals arrays
+
+	float sigR; // the read part (multiplied by cosine)
+	float sigI; // the imaginary part (multiplied by sine)
+
+
 
 	///////////////////////////////////////////////////////
 	// Multiply by sine and cosine                       //
 	///////////////////////////////////////////////////////
 
-	sigR = sig * (*cos_ptr); // real output of the hilbert transform
-	cos_ptr++;
+	sigR = sample * cos_vals[index]; // real output
+	sigI = sample * sin_vals[index]; // imaginary output
+
+	index = index + 1;
 	// if the pointer has reached the end of the array
-	if(cos_ptr == cos_vals + (F_SAMP/F_SIG)){
-		cos_ptr = cos_vals; // reassign to the begining
+	if(index == NUM_PTS){
+		index = 0; // reassign to the begining
 	}
 
-	sigI = sig * (*sin_ptr); // imaginary output of the hilbert transform
-	sin_ptr++;
-	// if the pointer has reached the end of the array
-	if(sin_ptr == sin_vals + (F_SAMP/F_SIG)){
-		sin_ptr = sin_vals; // reassign to the begining
-	}
 
 	///////////////////////////////////////////////////////
 	// Lowpass filter                                    //
 	///////////////////////////////////////////////////////
+
+
+
+	return 0; //dummy return
 
 }
