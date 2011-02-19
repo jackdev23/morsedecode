@@ -25,8 +25,16 @@ REFERENCES:
 
 #include "dsp.h"
 #include "adc.h"
+<<<<<<< .mine
+
+// the following is specific to the demo board and will need to be changed for the actual
+// processor:
+=======
 #include "filter86.h"
+>>>>>>> .r73
 #include <p33FJ256GP506.h> // Device for DSC-Starter Kit, Change for EMD device.
+#include "sask.h"// Device for DSC-Starter Kit, Change for EMD device.
+
 
 // Chip Initialization of Configuration Registers
 //   The Configuration registers are located in the program memory space. They are not Special
@@ -40,9 +48,7 @@ _FWDT(FWDTEN_OFF);  							// disable watchdog for debug
 
 
 // Global Variables 
-#define NUM_SAMPLES 100
-volatile int result_sin[NUM_SAMPLES]; 
-volatile int result_cos[NUM_SAMPLES]; 
+#define NUM_SAMPLES 100 
 volatile int debug_cnt = 0;
 
 // Filters from dsp.h
@@ -88,6 +94,14 @@ extern fractional* FIR (                /* FIR filtering */
 
 int main (void)
 {
+	//For DSC-Starter Kit only, Change for EMD device.
+	SASKInit(); // initalize LEDS
+	/* Examples of how to turns the 3 LEDS on:
+	GREEN_LED = SASK_LED_ON;
+	YELLOW_LED = SASK_LED_ON;
+	RED_LED = SASK_LED_ON;
+	*/
+
 	int i;
 
 // TODO: Setup Clock - create function!
@@ -147,10 +161,10 @@ unsigned int indx = 0;
 
 void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void)
 {
+	int sample; // varaivle to store the ACD value in
 
 	// get value from ADC register - ADC1BUF0 and 
-	result_sin[indx] = ADC1BUF0;
-	result_cos[indx] = ADC1BUF0;
+	sample = ADC1BUF0;
 
 	if(indx<NUM_SAMPLES)
 	{
