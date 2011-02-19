@@ -18,10 +18,10 @@
  *****************************************************************************/
 fractional decoder_dsp(fractional sample){
 
-	int index = 0; // index into the sin_vals and cos_vals arrays
+	static int index = 0; // index into the sin_vals and cos_vals arrays
 
-	float sigR; // the read part (multiplied by cosine)
-	float sigI; // the imaginary part (multiplied by sine)
+	fractional sigR; // the read part (multiplied by cosine)
+	fractional sigI; // the imaginary part (multiplied by sine)
 
 
 
