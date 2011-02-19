@@ -23,10 +23,7 @@ REFERENCES:
 
 ********************************************************************/
 
-
-//#include "c_def_types.h"
 #include "dsp.h"
-//#include "decoder.h"
 #include "adc.h"
 #include <p33FJ256GP506.h> // Device for DSC-Starter Kit, Change for EMD device.
 
@@ -88,9 +85,10 @@ extern fractional* FIR (                /* FIR filtering */
 );
 
 
-// TODO: Get the real values
-const fractional sin_v[3] = {1,0,1};  
-const fractional cos_v[3] = {1,0,1}; 
+// These values are defined for Fsig = 700Hz and Fsample = 2100Hz ONLY.
+//  if you change either of these frequencies then these values must be recomputed.
+const fractional sin_v[3] = {0.0,0.866025403784439,-0.866025403784438};  
+const fractional cos_v[3] = {1.000000000000000,-0.499999999999999,-0.500000000000001}; 
 
 int main (void)
 {
@@ -125,11 +123,7 @@ int main (void)
 					100,  // num of coeffs
 					);
    	*/
-	//uart_init();
 
-   //TODO: Setup Decoder - this only partially complete
-  // decoder_init(12,12); //
-	
 	while(1)
 	{
 		i++;
@@ -174,6 +168,9 @@ void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void)
 		
 	}
 	debug_cnt=0;
+
+	//TODO: 
+	//SquareMagnitudeCplx
 
 	Buffer ^= 1;
 
