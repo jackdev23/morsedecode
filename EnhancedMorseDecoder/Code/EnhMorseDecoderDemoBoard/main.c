@@ -25,6 +25,7 @@ REFERENCES:
 
 #include "dsp.h"
 #include "adc.h"
+#include "filter86.h"
 #include <p33FJ256GP506.h> // Device for DSC-Starter Kit, Change for EMD device.
 
 // Chip Initialization of Configuration Registers
@@ -45,9 +46,9 @@ volatile int result_cos[NUM_SAMPLES];
 volatile int debug_cnt = 0;
 
 // Filters from dsp.h
-extern FIRStruct pFilterI;
-extern FIRStruct fir150FilterI;
-extern FIRStruct fir150FilterQ;
+//extern FIRStruct pFilterI;
+//extern FIRStruct fir150FilterI;
+//extern FIRStruct fir150FilterQ;
 
 extern fractional* FIRDecimate (        /* Decimation by R:1 rate */
    int numSamps,                        /* number of _output_ samples (N) */
@@ -114,10 +115,14 @@ int main (void)
    	//Setup ADC for 2100Hz sampling. Handeled by interrupt routine
    	adc_init();
    	
-    /*FIRStructInit( 	&pFilterI,
-					100,  // num of coeffs
+	FIRStruct pFilter;
+    FIRStructInit( 	&pFilter,
+					NCOEFFS,  // num of coeffs
+					filter88_coeffs ,// coefficients
+					COEFF_PAGE_NUM  ,// 	
+					z   // delay
 					);
-   	*/
+   	
 
 	while(1)
 	{
