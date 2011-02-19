@@ -25,13 +25,9 @@ REFERENCES:
 
 #include "dsp.h"
 #include "adc.h"
-<<<<<<< .mine
-
-// the following is specific to the demo board and will need to be changed for the actual
-// processor:
-=======
 #include "filter86.h"
->>>>>>> .r73
+// the following is specific to the demo board and will need to be changed for the actual
+// processor:s
 #include <p33FJ256GP506.h> // Device for DSC-Starter Kit, Change for EMD device.
 #include "sask.h"// Device for DSC-Starter Kit, Change for EMD device.
 
