@@ -26,8 +26,10 @@ REFERENCES:
 #include "dsp.h"
 #include "adc.h"
 #include "filter86.h"
+#include "decoder_dsp.h"
+
 // the following is specific to the demo board and will need to be changed for the actual
-// processor:s
+// processor:
 #include <p33FJ256GP506.h> // Device for DSC-Starter Kit, Change for EMD device.
 #include "sask.h"// Device for DSC-Starter Kit, Change for EMD device.
 
@@ -44,18 +46,17 @@ _FWDT(FWDTEN_OFF);  							// disable watchdog for debug
 
 
 // Global Variables 
-#define NUM_SAMPLES 100 
 volatile int debug_cnt = 0;
+volatile fractional proc_samp; // the sample after it has been processed by the DSP routine
 
 int main (void)
 {
 	//For DSC-Starter Kit only, Change for EMD device.
 	SASKInit(); // initalize LEDS
-	/* Examples of how to turns the 3 LEDS on:
+	// Examples of how to turns the 3 LEDS on:
 	GREEN_LED = SASK_LED_ON;
 	YELLOW_LED = SASK_LED_ON;
 	RED_LED = SASK_LED_ON;
-	*/
 
 	int i;
 
@@ -105,37 +106,24 @@ _ADC1Interrupt():ADC Conversion is complete
 				ISR name is chosen from the device linker script.
 				List of names in MPLAB C30 Compiler User's Guide (DS51284)
 =============================================================================*/
-unsigned int Buffer = 0;
-unsigned int indx = 0;
-
 void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void)
 {
 	int sample; // varaivle to store the ACD value in
+	fractional sample_frac; // sample converted to a fractional
 
 	// get value from ADC register - ADC1BUF0 and 
 	sample = ADC1BUF0;
+	// cast to fractional
+	sample_frac = (fractional)sample;
+	
 
-	if(indx<NUM_SAMPLES)
-	{
-		indx++;
-	}else
-	{
-		indx=0;
-	}
+	// call the DSP routine with the sample
+	proc_samp = decoder_dsp(sample_frac);
 
-	if(Buffer == 0)
-	{
-
-	} else
-	{
-		
-	}
 	debug_cnt=0;
 
 	//TODO: 
 	//SquareMagnitudeCplx
-
-	Buffer ^= 1;
 
     IFS0bits.AD1IF = 0;			// Clear the A/D interrupt flag bit
 }
