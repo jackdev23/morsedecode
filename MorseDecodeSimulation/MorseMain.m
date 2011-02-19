@@ -105,9 +105,13 @@ for i=1:length(a)
        bin_str= dec2bin(q15_coefs(i));
    end
    dec = bin2dec(bin_str);
-   hex_str{i,:} =  dec2hex(dec);
+   hex_str{i,:} =  ['0x' dec2hex(dec)];
    
 end
+%% Save filter coeffs to txt file
+fid = fopen('Filter.txt','w');
+fprintf(fid, '%6s\n', hex_str{:});
+fclose(fid);
 
 %% Low Pass Filter - Simplified
 % filter both the complex and real number then calc magnitude of results
