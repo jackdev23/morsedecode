@@ -115,12 +115,6 @@ int main (void)
 	while (OSCCONbits.COSC != 0b01);	/*	Wait for Clock switch to occur	*/
 	while(!OSCCONbits.LOCK);
 
-	//initialize result vector	
-   	for(i=0; i<NUM_SAMPLES; i+=1)
-   	{ 	//zero-pad vectors
-		result_sin[i] = 0; 
-		result_cos[i] = 0; 
-	} 
 
    	//Setup ADC for 2100Hz sampling. Handeled by interrupt routine
    	adc_init();
