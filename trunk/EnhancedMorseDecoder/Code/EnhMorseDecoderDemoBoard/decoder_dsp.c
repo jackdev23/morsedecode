@@ -6,6 +6,21 @@
  */
 
 #include "decoder_dsp.h"
+#include "filter86.h" // header file for an 86 coefficient filter
+
+
+void filter_init(FIRStruct * pFilter){
+
+	// Initialize FIR Filter   	
+    FIRStructInit( 	pFilter,
+					NCOEFFS,  // num of coeffs
+					filter86_coeffs ,// coefficients
+					COEFF_PAGE_NUM  ,// 	
+					z   // delay
+					);
+   	
+	FIRDelayInit(pFilter);  // initialize the delay line 
+}
 
 
 /******************************************************************************
@@ -16,12 +31,16 @@
  * Description: Implements the DSP routine defined in 
  *              Morse Decoder - Whitepaper.docx
  *****************************************************************************/
-fractional decoder_dsp(fractional sample){
+fractional decoder_dsp(fractional sample, FIRStruct * pFilter){
 
+	// Variables for Sin/Cos multiply
 	static int index = 0; // index into the sin_vals and cos_vals arrays
-
 	fractional sigR; // the read part (multiplied by cosine)
 	fractional sigI; // the imaginary part (multiplied by sine)
+
+	// Variables for filtering
+	fractional fsigR; // outputs of the filter
+	//fractional fsigI;
 
 
 
@@ -39,10 +58,12 @@ fractional decoder_dsp(fractional sample){
 	}
 
 
+
 	///////////////////////////////////////////////////////
 	// Lowpass filter                                    //
 	///////////////////////////////////////////////////////
-
+	
+	FIR(1,&fsigR,&sigR,pFilter);
 
 
 	return 0; //dummy return

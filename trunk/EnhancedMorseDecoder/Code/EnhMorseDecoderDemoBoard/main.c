@@ -25,7 +25,6 @@ REFERENCES:
 
 #include "dsp.h"
 #include "adc.h"
-#include "filter86.h"
 #include "decoder_dsp.h"
 
 // the following is specific to the demo board and will need to be changed for the actual
@@ -48,6 +47,7 @@ _FWDT(FWDTEN_OFF);  							// disable watchdog for debug
 // Global Variables 
 volatile int debug_cnt = 0;
 volatile fractional proc_samp; // the sample after it has been processed by the DSP routine
+FIRStruct pFilter; // struct used by the FIR Filter function
 
 int main (void)
 {
@@ -79,16 +79,8 @@ int main (void)
    	//Setup ADC for 2100Hz sampling. Handeled by interrupt routine
    	adc_init();
 
-	// Initialize FIR Filter   	
-	FIRStruct pFilter;
-    FIRStructInit( 	&pFilter,
-					NCOEFFS,  // num of coeffs
-					filter88_coeffs ,// coefficients
-					COEFF_PAGE_NUM  ,// 	
-					z   // delay
-					);
-   	
-	FIRDelayInit(&pFilter);  // initialize the delay line 
+	// initalize the filter struct
+	filter_init(&pFilter);
 
 	// Forever
 	while(1)
@@ -108,17 +100,20 @@ _ADC1Interrupt():ADC Conversion is complete
 =============================================================================*/
 void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void)
 {
-	int sample; // varaivle to store the ACD value in
-	fractional sample_frac; // sample converted to a fractional
+	fractional sample; // sample
 
 	// get value from ADC register - ADC1BUF0 and 
 	sample = ADC1BUF0;
+
+	//TODO: ENSURE THAT ADC RETURNS IN FRACTION FORMAT
+	//TODO: CHECK # BITS ON ADC
+
 	// cast to fractional
 	sample_frac = (fractional)sample;
 	
 
 	// call the DSP routine with the sample
-	proc_samp = decoder_dsp(sample_frac);
+	proc_samp = decoder_dsp(sample, &pFilter);
 
 	debug_cnt=0;
 

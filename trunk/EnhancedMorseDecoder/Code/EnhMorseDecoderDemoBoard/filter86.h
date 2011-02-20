@@ -7,7 +7,7 @@
  */
 
 #ifndef FILTER86_H_
-#define FILTER68_H_
+#define FILTER86_H_
 
 #include "dsp.h"
 
@@ -16,7 +16,7 @@
 
 ////////////////////////////////////////
 // FIR Coeffecient Buffer
-fractional filter88_coeffs[NCOEFFS] __attribute__ ((space(xmemory),far)) = {
+fractional filter86_coeffs[NCOEFFS] __attribute__ ((space(xmemory),far)) = {
    0x4,   0x6,   0xA,   0xE,  0x10,   0xF,   0x8,0x8006,0x801C,0x803B,
 0x8062,0x808C,0x80B5,0x80D7,0x80E8,0x80E4,0x80C4,0x8088,0x8032,  0x37,
   0xA6, 0x10B, 0x154, 0x171, 0x154,  0xF7,  0x5E,0x806A,0x8149,0x821F,
@@ -32,5 +32,5 @@ fractional filter88_coeffs[NCOEFFS] __attribute__ ((space(xmemory),far)) = {
 fractional z[NCOEFFS] __attribute__ ((space(ymemory),far)); 
 ////////////////////////////////////////
 
-#endif /* */
+#endif /* FILTER86_H_ */
 //EOF
