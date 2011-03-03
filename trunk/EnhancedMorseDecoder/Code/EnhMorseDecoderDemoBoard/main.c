@@ -82,7 +82,7 @@ int main (void)
 	// initalize the filter struct
 	filter_init(&pFilter);
 
-	// Forever
+	// Loop Forever
 	while(1)
 	{
 		i++;
@@ -102,14 +102,14 @@ void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void)
 {
 	fractional sample; // sample
 
-	// get value from ADC register - ADC1BUF0 and 
+	// get value from ADC register - ADC1BUF0
+    // this assumes that the ADC is configured to output fractionl type
 	sample = ADC1BUF0;
 
 	//TODO: ENSURE THAT ADC RETURNS IN FRACTION FORMAT
 	//TODO: CHECK # BITS ON ADC
 
-	// cast to fractional
-	sample_frac = (fractional)sample;
+
 	
 
 	// call the DSP routine with the sample
