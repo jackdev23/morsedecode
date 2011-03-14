@@ -7,8 +7,8 @@ CHANGE HISTORY:
 	1: 03/12/2011 - Dylan Thorner - Original release
 -------------------------------------------------------------------------------------------------
 DESCRIPTION:
-	main file for project.
-	intended to test the  dsPIC33FJ128GP802 microcontroller on the enhanced morse decoder PCB.
+	Main file for the project to test the dsPIC33FJ128GP802 microcontroller on the Enhanced 
+	Morse Decoder Board Rev. 1.0.
 	
 	This program provides the following test outputs:
 		LED 2 is always on (check LED and that it was programmed)
@@ -21,6 +21,13 @@ DESCRIPTION:
 //#include "dsp.h" // include microchip DSP routines
 
 #include "led.h" //include the files to work with the LEDs
+#include "oscillator.h" // file to initialize the oscillator
+
+
+// Select Internal FRC at POR
+_FOSCSEL(FNOSC_FRC);
+// Enable Clock Switching and Configure Posc in XT mode
+_FOSC(FCKSM_CSECMD & OSCIOFNC_OFF & POSCMD_XT);
 
 
 
