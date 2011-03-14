@@ -10,7 +10,12 @@ DESCRIPTION:
 	Cointains a functions to deal with the LEDs for the morse decoder PCB.
 	PORTB10 - LED1
 	PORTB11 - LED2
-------------------------------------------------------------------------------------------------*/
+-------------------------------------------------------------------------------------------------
+REFRENCES:
+	Section 10. I/O Ports - page 4 for latch vs. port register usage
+	
+	SASK WM8510 Record Play Demo with Intro - how to define LEDs and TRIS registers for easy use
+-----------------------------------------------------------------------------------------------*/
 
 #include "led.h" //include the files to work with the LEDs
 
