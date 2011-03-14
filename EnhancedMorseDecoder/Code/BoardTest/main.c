@@ -24,20 +24,32 @@ DESCRIPTION:
 #include "oscillator.h" // file to initialize the oscillator
 
 
+// Device Configuration
+
 // Select Internal FRC at POR
 _FOSCSEL(FNOSC_FRC);
-// Enable Clock Switching and Configure Posc in XT mode
+// Enable Clock Switching(FSCM is disabled), OSC2 Pin set to output clk (will be ignored b/c used for oscillator), 
+//and Configure Posc in XT mode
 _FOSC(FCKSM_CSECMD & OSCIOFNC_OFF & POSCMD_XT);
 
+// Watchdog Timer Enabled/disabled by user software (will stay disabled)
+_FWDT(FWDTEN_OFF);
 
 
 int main (void){
 	
+	// used to delay for LED blinking
 	int i = 0;
+	int j = 0;
+	
+	//////////////////////////////
+	//      Initialization      //
+	//////////////////////////////
 	
 	// initialize the LEDs 
 	init_leds();
-	// initialize the oscilator
+	// initialize the oscilator and swich from FRC to oscillator
+	init_osc();
 	
 	
 	
@@ -50,20 +62,15 @@ int main (void){
 	while(1){
 		
 		// no nothing - delay
-		for(i=0; i<32767; i++){}
-		// no nothing - delay
-		for(i=0; i<32767; i++){}
-		// no nothing - delay
-		for(i=0; i<32767; i++){}
-		
+		for(i=0; i<100; i++){
+			for(j=0; j<32767; j++){}
+		}		
 		LED1 = LED_OFF;
 		
 		// no nothing - delay
-		for(i=0; i<32767; i++){}
-		// no nothing - delay
-		for(i=0; i<32767; i++){}
-		// no nothing - delay
-		for(i=0; i<32767; i++){}
+		for(i=0; i<100; i++){
+			for(j=0; j<32767; j++){}
+		}
 		
 		LED1 = LED_ON;
 	}
@@ -74,3 +81,5 @@ int main (void){
 	
 	return 0;
 }
+
+

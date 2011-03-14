@@ -20,20 +20,34 @@ REFRENCES:
 
 #include "oscillator.h" // header for oscillator functions
 
-void osc_init(void){
+
+
+/******************************************************************************
+ * Name: init_osc
+ * Inputs: n/a
+ * Outputs: n/a 
+ *
+ * Description: sets up registers to acheive 40 MIPS operation (Fosc = 80 Mhz)
+ *				given a 8 MHz osciallator. then switches the clock to the 
+ *				oscillator and waits for it to stabalize before returning 
+ *				control to the main program.
+ *              Equations form datasheet: 	Fcy = Fosc/2
+ *											Fosc = Fin(M/(N1*N2))
+ *****************************************************************************/
+void init_osc(void){
 	
 	// Configure PLL prescaler, PLL postscaler, PLL divisor
-	PLLFBD=30; 				// M = 32
+	PLLFBD=38; 				// M = 40
 	CLKDIVbits.PLLPOST = 0;	// N2 = 2
 	CLKDIVbits.PLLPRE = 0; 	// N1 = 2
 	
 	// Initiate Clock Switch to Primary Oscillator with PLL (NOSC = 0b011)
-	__builtin_write_OSCCONH(0x03);
-	__builtin_write_OSCCONL(0x01);
+	__builtin_write_OSCCONH(0x03); // Set the NOSC control bits (OSCCON<10:8>) for XTPLL
+	__builtin_write_OSCCONL(0x01); //Set the OSWEN bit (OSCCON<0>) to initiate the oscillator switch.
 	
 	// Wait for Clock switch to occur
-	while (OSCCONbits.COSC! = 0b011);
+	while (OSCCONbits.COSC != 0b011) {};
 	
 	// Wait for PLL to lock
-	while(OSCCONbits.LOCK! = 1) {};
+	while(OSCCONbits.LOCK != 1) {};
 }	

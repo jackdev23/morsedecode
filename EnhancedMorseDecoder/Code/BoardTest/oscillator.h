@@ -21,4 +21,4 @@ REFRENCES:
 #include "p33fxxxx.h" // includes correct header for processor
 
 // Function protypes
-void osc_init(void);
+void init_osc(void);
