@@ -29,6 +29,8 @@ WPM = 12;
 [xn cleanxn] = encodeMorse(fsig,sText,SNR,fsample,WPM);
 L = length(xn);
 
+
+
 if(PLOT)
     %  Stimulus code to test the Morse Decoder     
     figure; plot(xn); title('Noisy Morse'); xlabel('samples');      
