@@ -1,4 +1,4 @@
-function [r,t,f,sig] = mag_detect_wave(iq, nl, genplots, Ts)
+function [stringArray] = mag_detect_wave(iq, nl, genplots, Ts)
 
 if nargin < 2
     genplots = 0;
@@ -11,6 +11,7 @@ sig.fm = nan(1,length(sig.m));
 PC = 0;
 % N = 16;
 N = 12;
+stringArray = '';
 
 detect = nl+5;  % detect threshold in db
 reject = nl+7;  % reject threshold in db
@@ -43,7 +44,8 @@ for s = 1:length(sig.m)
                 
 %                 if PC > 1 && r(PC) - f(PC-1) > 5*Tunit
                 if PC > 1 && r(PC) - f(PC-1) > 2.1*Tunit
-                    fprintf(' / ');
+%                     fprintf(' / ');
+                    stringArray = strcat(stringArray,'/');
                 end
                 
             elseif sig.fm(s) < detect - 3  % Discard due to low power
@@ -62,23 +64,28 @@ for s = 1:length(sig.m)
                 f(PC) = s;
                 
                 if f(PC)-r(PC) > 2*Tunit
-                    fprintf('-');
+%                     fprintf('-');
+                    stringArray = strcat(stringArray,'-');
                 else
-                    fprintf('.');
+%                     fprintf('.');
+                    stringArray = strcat(stringArray,'.');
                 end 
             end
     end
 end
 
-fprintf('\n');
+% fprintf('\n');
+% stringArray = strcat(stringArray,'\n');
 
-r = r(1:PC);
-t = t(1:PC);
-f = f(1:PC);
 
 if ~genplots
     return;
 else
+    r = r(1:PC);
+    t = t(1:PC);
+    f = f(1:PC);
+
+    
     lim = inf;
     if isinf(lim)
         II = 1:length(sig.m);
