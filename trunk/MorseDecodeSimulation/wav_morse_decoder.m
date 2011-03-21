@@ -103,35 +103,9 @@ fxn = filter(mavgwindow,1,abs(fxn)); % averging window cleans up results
 %
 %% Decode result of Algorithm
 Ts = 1/fsample;
-[r,t,f] = mag_detect_wave(fxn, -20, 1,Ts);
+[DitDahStringArray] = mag_detect_wave(fxn, -18, 1,Ts);
+MorseString = morse_loopup(DitDahStringArray);
 
-widths = (f-r);
-midpoint = (max(widths)+min(widths))/2;
-Tunit = mean(widths(widths < midpoint))*Ts;
-
-symbols = (f-r)*Ts > 2*Tunit;
-spaces  = [(r(2:end)-f(1:end-1)),0]*Ts > 5*Tunit;
-
-chars = {''};
-
-for i = 1:length(symbols)
-   
-    if symbols(i)
-        chars{end}(end+1) = '-';
-        fprintf('-');
-    else
-        chars{end}(end+1) = '.';
-        fprintf('.');
-    end
-    
-    if spaces(i)
-        chars{end+1} = '';
-        fprintf(' / ');
-    end
-    
-end
-fprintf('\n');
-dit_dah_string=chars;
 % outstring =  demorse_btc(dit_dah_string{1});
 
 
