@@ -5,11 +5,16 @@ Created on:	3/12/2011
 -------------------------------------------------------------------------------------------------
 CHANGE HISTORY:
 	1: 03/12/2011 - Dylan Thorner - Original release
+	2: 03/25/2011 - Dylan Thorner - Added preprocessor directives to prevent file from being 
+									included twice
 -------------------------------------------------------------------------------------------------
 DESCRIPTION:
 	Cointains a functions to deal with the LEDs for the morse decoder PCB.
 	PORTB10 -> LED1
 	PORTB11 -> LED2
+	
+	Designed to work with the dsPIC33FJ128GP802 microcontroller on the Enhanced 
+	Morse Decoder Board Rev. 1.0.
 	
 -------------------------------------------------------------------------------------------------
 REFRENCES:
@@ -17,6 +22,8 @@ REFRENCES:
 	
 	SASK WM8510 Record Play Demo with Intro - how to define LEDs and TRIS registers for easy use
 -----------------------------------------------------------------------------------------------*/
+#ifndef LED_H_
+#define LED_H_
 
 #include "p33fxxxx.h" // includes correct header for processor
 
@@ -44,5 +51,4 @@ void init_leds(void);
 
 
 
-
-
+#endif /* LED_H_ */
