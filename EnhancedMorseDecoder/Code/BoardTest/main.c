@@ -26,6 +26,11 @@ DESCRIPTION:
 #include "gpio.h" // file to work with the GPIO pins (digital morse code output)
 
 
+
+#define FLASH_LED // Define this to have LED 1 flash and LED 2 on, else comment out
+
+
+
 // Device Configuration
 
 // Select Internal FRC at POR
@@ -57,20 +62,24 @@ int main (void){
 	init_osc();		// initialize the oscilator and swich from FRC to oscillator
 	init_leds();	// initialize the LEDs 
 	init_gpio();	// initialize the GPIO pin
-	init_adc();		// initialize the ADC
+	//init_adc();		// initialize the ADC
 	
 	
 	
-	// turn on the second LED to verify functionality
-	LED2 = LED_ON;
-	
+	//Disable the code that flashes the LED if not needed
+	#ifdef FLASH_LED
+		LED2 = LED_ON;// turn on the second LED to verify functionality
+	#endif /* FLASH_LED  */
 	
 
 	// Loop Forever
 	while(1){
 		
+		//Disable the code that flashes the LED if not needed
+		#ifdef FLASH_LED
+		
 		// no nothing - delay
-		for(i=0; i<100; i++){
+		for(i=0; i<60; i++){
 			for(j=0; j<32767; j++){}
 		}		
 		LED1 = LED_OFF;
@@ -81,6 +90,8 @@ int main (void){
 		}
 		
 		LED1 = LED_ON;
+		
+		#endif /* FLASH_LED */
 	}
 	
 	
