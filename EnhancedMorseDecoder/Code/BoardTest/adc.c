@@ -20,6 +20,9 @@ REFRENCES:
 		from http://www.microchip.com/wwwproducts/Devices.aspx?dDocName=en532298
 -----------------------------------------------------------------------------------------------*/
 
+#include "adc.h"
+
+void init_TMR3(void);  // local function used to setup ADC functionality
 
 /******************************************************************************
  * Name: init_adc
