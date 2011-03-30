@@ -59,7 +59,7 @@ void init_adc(void){
 
     //AD1PCFGH/AD1PCFGL: Port Configuration Register
 	AD1PCFGL			= 0xFFFF;	// disable all analog inputs
-	AD1PCFGH			= 0xFFFF;	// disable all analog inputs
+	//AD1PCFGH			= 0xFFFF;	// disable all analog inputs - sww not register in p33FJ128GP802 
     AD1PCFGLbits.PCFG0 	= 0;		// set AN0 as Analog Input
        
     IFS0bits.AD1IF = 0;			// Clear the A/D interrupt flag bit
@@ -72,3 +72,28 @@ void init_adc(void){
 	IEC0bits.AD1IE = 1;			// Enable A/D interrupt, 
 }	
 
+/*========================================================================================  
+Timer 3 is setup to time-out every 125 microseconds (8Khz Rate). As a result, the module 
+will stop sampling and trigger a conversion on every Timer3 time-out, i.e., Ts=125us. 
+At that time, the conversion process starts and completes Tc=14*Tad periods later.
+
+When the conversion completes, the module starts sampling again. However, since Timer3 
+is already on and counting, about (Ts-Tc)us later, Timer3 will expire again and trigger 
+next conversion. 
+========================================================================================*/
+void init_TMR3(void) 
+{
+        TMR3                    = 0x0000;  // initialize timer to 0
+                PR3                             = SAMPPRD; //sampling rate
+        IFS0bits.T3IF   = 0;
+        IEC0bits.T3IE   = 0;
+
+        //Start Timer 3
+        T3CONbits.TON = 1;
+
+}//init_TMR3
+//TIMER INTERRUPT TRIGGER - define sampling rate
+// This ADC module trigger mode is configured by setting SSRC<2:0> = 010. TMR3 (for ADC1)
+// and TMR5 (for ADC2) can be used to trigger the start of the A/D conversion when a match occurs
+// between the 16-bit Timer Count register (TMRx) and the 16-bit Timer Period register (PRx). The
+// 32-bit timer can also be used to trigger the start of the A/D conversion.
