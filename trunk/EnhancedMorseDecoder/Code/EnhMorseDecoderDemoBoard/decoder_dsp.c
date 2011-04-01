@@ -7,8 +7,14 @@
 
 #include "decoder_dsp.h"
 #include "filter86.h" // header file for an 86 coefficient filter
+#include "dsp.h"
+#include "math.h"
 
 #define WINDOW_FILTER_SIZE 16
+
+static fractional sin_vals_frac[NUM_PTS];
+static fractional cos_vals_frac[NUM_PTS];
+
 
 void filter_init(FIRStruct * pFilter){
 
@@ -21,6 +27,14 @@ void filter_init(FIRStruct * pFilter){
 					);
    	
 	FIRDelayInit(pFilter);  // initialize the delay line 
+
+	sin_vals_frac[0] = Float2Fract(0.0);
+	sin_vals_frac[1] = Float2Fract(0.866025403784439);
+	sin_vals_frac[2] = Float2Fract(-0.866025403784438);
+	cos_vals_frac[0] = Float2Fract(1.000000000000000);
+	cos_vals_frac[1] = Float2Fract(-0.499999999999999);
+	cos_vals_frac[0] = Float2Fract(-0.500000000000001);
+
 }
 
 
@@ -44,26 +58,27 @@ fractional decoder_dsp(fractional sample, FIRStruct * pFilter){
 	fractional fsigR; // outputs of the filter
 	fractional fsigI; // outputs of the filter	
 
-  	fractional mag=0;  // magnitude of the filtered values
-  	static fractional window[WINDOW_FILTER_SIZE];
-  	static int        window_idx;
-  	static fractional average = 0;
-  
+  	float  mag=0;  // magnitude of the filtered values
+  	static float window[WINDOW_FILTER_SIZE]; // array to store the average values
+  	static int   window_idx;
+  	static float average = 0;
+  	static float debug_sigR, debug_sigI, debug_fsigR, debug_fsigI, debug_mag;
 	
 	///////////////////////////////////////////////////////
 	// Multiply by sine and cosine                       //
 	///////////////////////////////////////////////////////
 
-	sigR = sample * cos_vals[index]; // real output
-	sigI = sample * sin_vals[index]; // imaginary output
+	sigR = sample * cos_vals_frac[index]; // real output
+	sigI = sample * sin_vals_frac[index]; // imaginary output
 
 	index = index + 1;
 	// if the pointer has reached the end of the array
 	if(index == NUM_PTS){
 		index = 0; // reassign to the begining
 	}
-
-
+	
+	debug_sigR = Fract2Float(sigR);
+	debug_sigI = Fract2Float(sigI);
 
 	///////////////////////////////////////////////////////
 	// Lowpass filter                                    //
@@ -72,8 +87,10 @@ fractional decoder_dsp(fractional sample, FIRStruct * pFilter){
 	FIR(1,&fsigR,&sigR,pFilter);  // Real
 	FIR(1,&fsigI,&sigI,pFilter);  // Imag	
 	
-	mag = (fsigR ^ 2) + (fsigI ^ 2);  //TODO: should we take sqrt?  not sure it is needed.
-	
+	//convert results to float so we can use math.h functions :-)
+	debug_fsigR = Fract2Float(fsigR);
+	debug_fsigI = Fract2Float(fsigI);
+	mag = 	sqrtf( powf(debug_fsigR,2) + powf(debug_fsigI,2));
 	
 	///////////////////////////////////////////////////////
 	// Window Avg Filter                                 //
