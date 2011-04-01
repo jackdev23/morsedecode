@@ -26,11 +26,15 @@ REFERENCES:
 #include "dsp.h"
 #include "adc.h"
 #include "decoder_dsp.h"
+#include "math.h"
 
 // the following is specific to the demo board and will need to be changed for the actual
 // processor:
 #include <p33FJ256GP506.h> // Device for DSC-Starter Kit, Change for EMD device.
 #include "sask.h"// Device for DSC-Starter Kit, Change for EMD device.
+
+
+#define DEBUG_MODE 1		//select Debugger --> Select Tool --> MPLAB SIM
 
 
 // Chip Initialization of Configuration Registers
@@ -101,20 +105,23 @@ _ADC1Interrupt():ADC Conversion is complete
 void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void)
 {
 	fractional sample; // sample
+	fractional sample_frac;
+	static int sample_cnt = 0;
 
 	// get value from ADC register - ADC1BUF0
     // this assumes that the ADC is configured to output fractionl type
 	sample = ADC1BUF0;
 
-	//TODO: ENSURE THAT ADC RETURNS IN FRACTION FORMAT
-	//TODO: CHECK # BITS ON ADC
-
-
-	
-
+#ifdef DEBUG_MODE
+	//700/2100 == 1/3 == 0.33333
+	sample_frac= Float2Fract(sinf((float)2.0943951*(float)sample_cnt));
+	// 2*3.14159265*((float)(700/2100))* ==> 2.0943951
+	sample_cnt = sample_cnt + 1;
+	proc_samp = decoder_dsp(sample_frac, &pFilter);  //simulation only - building up code by simulating 
+#else	
 	// call the DSP routine with the sample
-	proc_samp = decoder_dsp(sample, &pFilter);
-
+    proc_samp = decoder_dsp(sample, &pFilter);
+#endif
 	debug_cnt=0;
 
 	//TODO: 
