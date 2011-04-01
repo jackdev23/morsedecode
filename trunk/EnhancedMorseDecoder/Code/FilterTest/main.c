@@ -93,10 +93,10 @@ int main (void)
 	// GENERATE SIGNAL
 
 //	sample_frac= Float2Fract(sinf((float)0.029919930034189*(float)sample_cnt)); //10
-	sample_frac= Float2Fract(sinf((float)0.149599650170943*(float)sample_cnt)); //50
+//	sample_frac= Float2Fract(sinf((float)0.149599650170943*(float)sample_cnt)); //50
 //	sample_frac= Float2Fract(0.5* sinf((float)0.299199300341885*(float)sample_cnt)); //100
 //	sample_frac= Float2Fract(sinf((float)1.795195802051310*(float)sample_cnt)); //600
-//	sample_frac= Float2Fract(0.5 * sinf((float)2.094395102393195*(float)sample_cnt)); //700
+	sample_frac= Float2Fract(0.5 * sinf((float)2.094395102393195*(float)sample_cnt)); //700
 	sample_cnt = sample_cnt + 1;
 
 
