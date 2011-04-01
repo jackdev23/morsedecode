@@ -78,9 +78,6 @@ fractional decoder_dsp(fractional sample, FIRStruct * pFilter){
 		index = 0; // reassign to the begining
 	}
 	
-	debug_sigR = Fract2Float(sigR);
-	debug_sigI = Fract2Float(sigI);
-
 	///////////////////////////////////////////////////////
 	// Lowpass filter                                    //
 	///////////////////////////////////////////////////////
@@ -109,12 +106,6 @@ fractional decoder_dsp(fractional sample, FIRStruct * pFilter){
 	if(window_idx >= WINDOW_FILTER_SIZE) {
 		window_idx = 0; // reset to beginning of window
  	}	
-	//TODO: think about this.
-	// average needs to be divide by the window size, if window is too large we can get overflow.
-	//  this would corrupt the window for at least all of window size. 
-	// we could reduce the size of the window by throwing out every other sample after the filter.
-	// I would like at least 1000 samples per second to decide if we maintain the pin high or low 
-    //  for downstream computaion. 
 	
 	return average/WINDOW_FILTER_SIZE; //return result
 
