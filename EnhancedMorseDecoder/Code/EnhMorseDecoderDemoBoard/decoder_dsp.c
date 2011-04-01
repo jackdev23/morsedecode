@@ -62,8 +62,7 @@ fractional decoder_dsp(fractional sample, FIRStruct * pFilter){
   	static float window[WINDOW_FILTER_SIZE]; // array to store the average values
   	static int   window_idx;
   	static float average = 0;
-  	static float debug_sigR, debug_sigI, debug_fsigR, debug_fsigI, debug_mag;
-	static float debug_sigR_ary[1000];
+  	static float debug_fsigR, debug_fsigI, debug_mag;
 
 	///////////////////////////////////////////////////////
 	// Multiply by sine and cosine                       //
