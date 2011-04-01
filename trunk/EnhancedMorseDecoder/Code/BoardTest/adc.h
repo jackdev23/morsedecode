@@ -33,5 +33,6 @@ REFRENCES:
 
 // Function prototypes
 void init_adc(void);
+void init_TMR3(void);  // local function used to setup ADC functionality
 
 #endif /* ADC_H_ */

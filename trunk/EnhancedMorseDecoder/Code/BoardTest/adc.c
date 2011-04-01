@@ -1,28 +1,9 @@
 /*-----------------------------------------------------------------------------------------------
-Author: 	Dylan Thorner
 Filename: 	adc.c
 Created on:	3/26/2011
--------------------------------------------------------------------------------------------------
-CHANGE HISTORY:
-	1: 03/26/2011 - Dylan Thorner - Original release
--------------------------------------------------------------------------------------------------
-DESCRIPTION:
-	Functions to set up and work with the ADC.
-	
-	Designed to work with the dsPIC33FJ128GP802 microcontroller on the Enhanced 
-	Morse Decoder Board Rev. 1.0.
-	
--------------------------------------------------------------------------------------------------
-REFRENCES:
-	Section 16. Analog-to-Digital Converter (ADC)
-	
-	Example project for ADC configuration: CE100_ADC_IIR_Filter_14aug09 
-		from http://www.microchip.com/wwwproducts/Devices.aspx?dDocName=en532298
 -----------------------------------------------------------------------------------------------*/
 
 #include "adc.h"
-
-void init_TMR3(void);  // local function used to setup ADC functionality
 
 /******************************************************************************
  * Name: init_adc
@@ -72,7 +53,9 @@ void init_adc(void){
 	IEC0bits.AD1IE = 1;			// Enable A/D interrupt, 
 }	
 
-/*========================================================================================  
+/*========================================================================================
+4/1/11 DJT - This header comment is outdated:
+
 Timer 3 is setup to time-out every 125 microseconds (8Khz Rate). As a result, the module 
 will stop sampling and trigger a conversion on every Timer3 time-out, i.e., Ts=125us. 
 At that time, the conversion process starts and completes Tc=14*Tad periods later.
@@ -84,7 +67,7 @@ next conversion.
 void init_TMR3(void) 
 {
         TMR3                    = 0x0000;  // initialize timer to 0
-                PR3                             = SAMPPRD; //sampling rate
+        PR3                     = SAMPPRD; //sampling rate
         IFS0bits.T3IF   = 0;
         IEC0bits.T3IE   = 0;
 
