@@ -97,23 +97,27 @@ hd = design(d); % Just designing the filter based on above criteria
 
 %% Convert filter coeffs
 a = hd.Numerator;
-q15_coefs=round(a*2^15);  % for 16 size coeffs. Then negitive numbers get the 16 bit value.
-%   if negitive number
-% strvcat('1',dec2bin(abs(-6),15)')'
-for i=1:length(a)
-   if(q15_coefs(i) < 0)
-       bin_str = strvcat('1',dec2bin(abs(q15_coefs(i)),15)')';
-   else
-       bin_str= dec2bin(q15_coefs(i));
-   end
-   dec = bin2dec(bin_str);
-   hex_str{i,:} =  ['0x' dec2hex(dec)];
-   
-end
+% q15_coefs=round(a.*2^15);  % for 16 size coeffs. Then negitive numbers get the 16 bit value.
+% %   if negitive number
+% % strvcat('1',dec2bin(abs(-6),15)')'
+% for i=1:length(a)
+%    if(q15_coefs(i) < 0)
+%        bin_str = strvcat('1',dec2bin(abs(q15_coefs(i)),15)')';
+%    else
+%        bin_str= dec2bin(q15_coefs(i),16);
+%    end
+%    dec = bin2dec(bin_str);
+%    hex_str{i,:} =  ['0x' dec2hex(dec)];
+%    
+% end
+
+
+[y]=dec2q15(a,'hex');  %% THIS IS CORRECT
+
 %% Save filter coeffs to txt file
-fid = fopen('Filter.txt','w');
-fprintf(fid, '%6s\n', hex_str{:});
-fclose(fid);
+% fid = fopen('Filter.txt','w');
+% fprintf(fid, '%6s\n', hex_str{:});
+% fclose(fid);
 
 %% Low Pass Filter - Simplified
 % filter both the complex and real number then calc magnitude of results
