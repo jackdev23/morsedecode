@@ -17,7 +17,7 @@
 
 
 // Function pototypes
-void filter_init(FIRStruct * pFilter);
-fractional decoder_dsp(fractional sample,FIRStruct * pFilter);
+void filter_init(FIRStruct * filterR, FIRStruct * filterI);
+float decoder_dsp(fractional sample, FIRStruct * filterR, FIRStruct * filterI);
 
 #endif /* DECODER_DSP_H_ */

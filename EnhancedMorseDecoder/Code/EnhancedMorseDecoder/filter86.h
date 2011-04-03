@@ -58,7 +58,8 @@ fractional filter86_coeffs[NCOEFFS] __attribute__ ((space(xmemory),far)) = {
 
 
 // FIR Delay Buffer
-fractional z[NCOEFFS] __attribute__ ((space(ymemory),far)); 
+fractional zR[NCOEFFS] __attribute__ ((space(ymemory),far)); 
+fractional zI[NCOEFFS] __attribute__ ((space(ymemory),far)); 
 ////////////////////////////////////////
 
 #endif /* FILTER86_H_ */
