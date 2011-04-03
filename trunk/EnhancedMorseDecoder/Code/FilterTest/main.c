@@ -95,8 +95,10 @@ int main (void)
 //	sample_frac= Float2Fract(sinf((float)0.029919930034189*(float)sample_cnt)); //10
 //	sample_frac= Float2Fract(sinf((float)0.149599650170943*(float)sample_cnt)); //50
 //	sample_frac= Float2Fract(0.5* sinf((float)0.299199300341885*(float)sample_cnt)); //100
+	//sample_frac= Float2Fract(sinf((float)0.329119230376074*(float)sample_cnt)); //110
+	sample_frac= Float2Fract(sinf((float)0.448798950512828*(float)sample_cnt)); //150
 //	sample_frac= Float2Fract(sinf((float)1.795195802051310*(float)sample_cnt)); //600
-	sample_frac= Float2Fract(0.5 * sinf((float)2.094395102393195*(float)sample_cnt)); //700
+	//sample_frac= Float2Fract(0.5 * sinf((float)2.094395102393195*(float)sample_cnt)); //700
 	sample_cnt = sample_cnt + 1;
 
 
@@ -105,6 +107,7 @@ int main (void)
 	answerf = Fract2Float(proc_samp);
 
 	debug_cnt=0;
+
 
 
 
@@ -130,33 +133,6 @@ void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void)
 	float answerf = 0;
 
 		sample = ADC1BUF0; //doesnt do anything in sim
-
-  // DEBUG ONLY - the 700Hz signal should be filtered out
-  //			- the 100Hz signal will not be.
-  //            - 
-
-//2*pi*freq_signal/freq_sampling = number_we_are_using
-// 700/2100 == 1/3 == 0.33333
-// 2*3.14159265*(700/2100)* ==> 2.0943951
-
-//  10Hz =  0.029919930034189
-//  50Hz =  0.149599650170943
-// 100Hz =  0.299199300341885
-// 600Hz =  1.795195802051310
-// 700Hz =  2.094395102393195
-
-	// GENERATE SIGNAL
-	sample_frac= Float2Fract(sinf((float)0.029919930034189*(float)sample_cnt)); //10
-	sample_frac= Float2Fract(sinf((float)0.149599650170943*(float)sample_cnt)); //50
-	sample_frac= Float2Fract(sinf((float)0.299199300341885*(float)sample_cnt)); //100
-	sample_frac= Float2Fract(sinf((float)1.795195802051310*(float)sample_cnt)); //600
-	sample_frac= Float2Fract(sinf((float)2.094395102393195*(float)sample_cnt)); //700
-	sample_cnt = sample_cnt + 1;
-
-
-	proc_samp = decoder_dsp(sample_frac, &pFilter);  //simulation only - building up code by simulating 
-
-	answerf = Fract2Float(proc_samp);
 
 	debug_cnt=0;
 
