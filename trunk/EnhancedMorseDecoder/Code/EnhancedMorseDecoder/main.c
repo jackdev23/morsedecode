@@ -91,7 +91,9 @@ _ADC1Interrupt():ADC Conversion is complete
  * Inputs: n/a
  * Outputs: n/a 
  *
- * Description: 
+ * Description: Reads the ADC value, calls the DSP Routine and compares the 
+ * 				output to a threshold, If greater than this threshold then a
+*				Morse code pulse was detected and this is ouput to a GPIO pin.
  *****************************************************************************/
 void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void){
 	
