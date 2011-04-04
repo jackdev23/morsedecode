@@ -5,12 +5,14 @@ Created on:	3/12/2011
 -------------------------------------------------------------------------------------------------
 CHANGE HISTORY:
 	1: 03/12/2011 - Dylan Thorner - LEDs, oscillator etc.
-	2: 04/01/2011 - Dylan Thorner - ADC testing 
+	2: 04/01/2011 - Dylan Thorner - ADC testing
+	3: 04/03/2011 - Added DSP routines and filters, First release for testing
 -------------------------------------------------------------------------------------------------
 DESCRIPTION:
-	Main file for the project for the dsPIC33FJ128GP802 microcontroller on the Enhanced 
+	Main file for the dsPIC33FJ128GP802 microcontroller on the Enhanced 
 	Morse Decoder Board Rev. 1.0.
-
+	
+	Detect threshold is not finialized as of 4/3/11
 ------------------------------------------------------------------------------------------------*/
 
 #include "p33fxxxx.h" 	// includes correct header for processor
@@ -24,8 +26,7 @@ DESCRIPTION:
 
 
 #define FLASH_LED 		// Define this to have LED 1 flash and LED 2 on, else comment out
-//#define DEBUG_MODE 1	// Define this to create a sinusiod rather that get sames from ADC
-						//select Debugger --> Select Tool --> MPLAB SIM
+
 
 //////////////////////
 // Global Variables //
@@ -33,7 +34,7 @@ DESCRIPTION:
 FIRStruct filterI; 	// struct used by the FIR Filter function for real data
 FIRStruct filterR; 	// struct used by the FIR Filter function for img data
 volatile float proc_samp;	// the sample after it has been processed by the DSP routine
-volatile float prev_proc_samp [500]; // past processed samples for debugging
+//volatile float prev_proc_samp [500]; // past processed samples for debugging
 static const float detect_thres = 0.0012; // threshold for detectiong Morse code
 
 
@@ -95,7 +96,7 @@ _ADC1Interrupt():ADC Conversion is complete
 void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void){
 	
 	fractional sample; // sample from ADC
-	static int index = 0; // index into proc samp
+	//static int index = 0; // index into proc samp, used for debug only
 
 	// get value from ADC register - ADC1BUF0
     // this assumes that the ADC is configured to output fractionl type
@@ -104,7 +105,7 @@ void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void){
 	// call the DSP routine with the sample
     proc_samp = decoder_dsp(sample, &filterR, &filterI);
     
-    
+    /*
     // for debug: add processed sample to past values array
     prev_proc_samp[index] = proc_samp;
     
@@ -112,25 +113,26 @@ void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void){
     if (index == 500){
 	    index = 0;
 	}
+	*/
 	
 	// If morse code is detected
 	if(proc_samp > detect_thres){
 		CODE_OUTPUT = DETECTED;
 		
-		// #ifdef
-		LED1 = LED_ON;
+		#ifdef FLASH_LED // Turn on LED1 if FLASH_LED is defined
+			LED1 = LED_ON;
+		#endif //FLASH_LED
+
 		
 	}
 	// Morse code not detected
 	else{
 		CODE_OUTPUT = NOT_DETECTED;
 		
-		LED1 = LED_OFF;		
+		#ifdef FLASH_LED // Turn off LED1 if FLASH_LED is defined
+			LED1 = LED_OFF;
+		#endif //FLASH_LED	
 	}	
-	
-		
-	// For sampling rate testing, toggle LED1 each sample
-	//LED1 = LED1 ^ 1; 
     
 
     IFS0bits.AD1IF = 0;			// Clear the A/D interrupt flag bit
