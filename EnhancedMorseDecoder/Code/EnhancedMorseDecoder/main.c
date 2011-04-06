@@ -35,8 +35,11 @@ FIRStruct filterI; 	// struct used by the FIR Filter function for real data
 FIRStruct filterR; 	// struct used by the FIR Filter function for img data
 volatile float proc_samp;	// the sample after it has been processed by the DSP routine
 //volatile float prev_proc_samp [500]; // past processed samples for debugging
-static const float detect_thres = 0.0012; // threshold for detectiong Morse code
-
+//static const float detect_thres = 0.0012; // threshold for detectiong Morse code
+//static const float detect_thres = 0.008; // flickers
+//static const float detect_thres = 0.01; // flickers
+//static const float detect_thres = 0.025; // flickers - at window =64 worked some
+static const float detect_thres = 0.018; // flickers - at window =64 worked some
 
 //////////////////////////
 // Device Configuration //
@@ -74,6 +77,7 @@ int main (void){
 	// Loop Forever
 	while(1){
 		// Do Nothing
+
 	}
 	
 	
@@ -99,23 +103,28 @@ void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void){
 	
 	fractional sample; // sample from ADC
 	//static int index = 0; // index into proc samp, used for debug only
-
+    float prev_proc_samp[500]; static int index=0;
+	float debug_sample;
 	// get value from ADC register - ADC1BUF0
     // this assumes that the ADC is configured to output fractionl type
 	sample = ADC1BUF0;
 
+  //  debug_sample = Fract2Float(sample);
+
 	// call the DSP routine with the sample
     proc_samp = decoder_dsp(sample, &filterR, &filterI);
-    
-    /*
+
     // for debug: add processed sample to past values array
-    prev_proc_samp[index] = proc_samp;
+/*  
+  prev_proc_samp[index] = proc_samp;
     
     index++;
     if (index == 500){
 	    index = 0;
 	}
-	*/
+*/	
+
+
 	
 	// If morse code is detected
 	if(proc_samp > detect_thres){

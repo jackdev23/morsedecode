@@ -6,11 +6,12 @@
  */
 
 #include "decoder_dsp.h"
-#include "filter86.h" // header file for an 86 coefficient filter
+//#include "filter86.h" // header file for an 86 coefficient filter
+#include "filter103.h" // header file for an 103 coefficient filter
 #include "dsp.h"
 #include "math.h"
 
-#define WINDOW_FILTER_SIZE 32
+#define WINDOW_FILTER_SIZE 64
 
 static fractional sin_vals_frac[NUM_PTS];
 static fractional cos_vals_frac[NUM_PTS];
@@ -46,12 +47,30 @@ void filter_init(FIRStruct * filterR, FIRStruct * filterI){
 
 	// These values are defined for Fsig = 700Hz and Fsample = 2100Hz ONLY.
 	//  if you change either of these frequencies then these values must be recomputed.
+/*
 	sin_vals_frac[0] = Float2Fract(0.0);
 	sin_vals_frac[1] = Float2Fract(0.866025403784439);
 	sin_vals_frac[2] = Float2Fract(-0.866025403784438);
 	cos_vals_frac[0] = Float2Fract(1.000000000000000);
 	cos_vals_frac[1] = Float2Fract(-0.499999999999999);
 	cos_vals_frac[2] = Float2Fract(-0.500000000000001);
+*/
+
+	sin_vals_frac[0] = Float2Fract(0.0);
+	sin_vals_frac[1] = Float2Fract(0.974927912181824);
+	sin_vals_frac[2] = Float2Fract(-0.433883739117558);
+	sin_vals_frac[3] = Float2Fract(-0.781831482468030);
+	sin_vals_frac[4] = Float2Fract(0.781831482468030);
+	sin_vals_frac[5] = Float2Fract(0.433883739117558);
+	sin_vals_frac[6] = Float2Fract( -0.974927912181824);
+	
+	cos_vals_frac[0] = Float2Fract(1.000000000000000);
+	cos_vals_frac[1] = Float2Fract(-0.222520933956314);
+	cos_vals_frac[2] = Float2Fract(-0.900968867902419);
+	cos_vals_frac[3] = Float2Fract(0.623489801858733);
+	cos_vals_frac[4] = Float2Fract(0.623489801858734);
+	cos_vals_frac[5] = Float2Fract(-0.900968867902419);
+	cos_vals_frac[6] = Float2Fract(-0.222520933956315);
 
 }
 
