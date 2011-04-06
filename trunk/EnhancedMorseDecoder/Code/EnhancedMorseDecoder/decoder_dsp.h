@@ -12,8 +12,11 @@
 
 
 #define F_SAMP 	2100 		 // sampling rate
-#define F_SIG  	700 		 // the frequency of the sinusoid being sampled
-#define NUM_PTS F_SAMP/F_SIG // the number of points the sin and cos arrays contain
+//#define F_SIG  	700 		 // the frequency of the sinusoid being sampled
+//#define NUM_PTS F_SAMP/F_SIG // the number of points the sin and cos arrays contain
+
+#define F_SIG  	600 		 // the frequency of the sinusoid being sampled
+#define NUM_PTS 7
 
 
 // Function pototypes
