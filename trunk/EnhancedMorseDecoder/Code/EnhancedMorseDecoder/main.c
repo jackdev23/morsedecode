@@ -45,7 +45,7 @@ volatile float proc_samp;	// the sample after it has been processed by the DSP r
 volatile int detect = 0; 	// 0 -> signal not detected		1-> signal detected
 volatile int num_detected = 0; 	// number of samples detected (or not detected) in a row
 static const float min_thres = 0.003;	// minimum acceptable threshold
-static const float max_thres = 0.08; 	// maximum acceptable threshold
+static const float max_thres = 0.05; 	// maximum acceptable threshold
 volatile float detect_thres = 0.004; 	// default threshold for detecting code
 
 //volatile float prev_proc_samp [500]; // past processed samples for debugging
@@ -151,7 +151,7 @@ void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void){
 		if(proc_samp > max_samp){
 			max_samp = proc_samp;
 		}	
-		detect_thres = max_samp + 0.0002; //raise above by small amount.
+		detect_thres = max_samp + 0.0001; //raise above by small amount.
 		
 		// Check to ensure the new threshold is within the predefined limits
 		if(detect_thres > max_thres){
