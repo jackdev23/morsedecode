@@ -5,6 +5,7 @@ Created on:	3/26/2011
 -------------------------------------------------------------------------------------------------
 CHANGE HISTORY:
 	1: 03/26/2011 - Dylan Thorner - Original release
+	2: 04/10/2011 - Dylan Thorner - Added code for a a digital input (for dynamic thresholding)
 -------------------------------------------------------------------------------------------------
 DESCRIPTION:
 	Cointains a functions to work with the GIPO pins on the Morse Decoder PCB:
@@ -27,9 +28,10 @@ REFRENCES:
  *****************************************************************************/
 void init_gpio(void){
 
-	// set the LED ports to outputs
-	CODE_TRIS = GPIO_OUTPUT;
+	//init for digital morse code output
+	CODE_TRIS = GPIO_OUTPUT; // set the LED ports to outputs
+	CODE_OUTPUT = NOT_DETECTED; // initialize it to off
 	
-	// initialize it to off
-	CODE_OUTPUT = NOT_DETECTED;
+	//init for dynamic thresholding input
+	DTHRES_TRIS = GPIO_INPUT;
 }
