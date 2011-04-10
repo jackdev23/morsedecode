@@ -35,11 +35,14 @@ FIRStruct filterI; 	// struct used by the FIR Filter function for real data
 FIRStruct filterR; 	// struct used by the FIR Filter function for img data
 volatile float proc_samp;	// the sample after it has been processed by the DSP routine
 //volatile float prev_proc_samp [500]; // past processed samples for debugging
-//static const float detect_thres = 0.0012; // threshold for detectiong Morse code
-//static const float detect_thres = 0.008; // flickers
-//static const float detect_thres = 0.01; // flickers
+//static const float detect_thres = 0.0012; // threshold for detectiong Morse code, 14mv
+static const float detect_thres = 0.008; // flickers
+
+///static const float detect_thres = 0.05; // works at high SNR solid - USE WHEN IN TOWER with WINDOW = 32
+
+//static const float detect_thres = 0.01; // works at high SNR solid
 //static const float detect_thres = 0.025; // flickers - at window =64 worked some
-static const float detect_thres = 0.018; // flickers - at window =64 worked some
+//static const float detect_thres = 0.018; // flickers - at window =64 worked some,  (did not detect 300mV)
 
 //////////////////////////
 // Device Configuration //
@@ -103,26 +106,33 @@ void __attribute__((interrupt, no_auto_psv)) _ADC1Interrupt(void){
 	
 	fractional sample; // sample from ADC
 	//static int index = 0; // index into proc samp, used for debug only
-    float prev_proc_samp[500]; static int index=0;
-	float debug_sample;
+  //  float prev_proc_samp[2000]; static int index=0;
+//	float debug_sample;
+//	float debug[2000];
+
+
 	// get value from ADC register - ADC1BUF0
     // this assumes that the ADC is configured to output fractionl type
 	sample = ADC1BUF0;
 
   //  debug_sample = Fract2Float(sample);
 
+
+
 	// call the DSP routine with the sample
     proc_samp = decoder_dsp(sample, &filterR, &filterI);
 
     // for debug: add processed sample to past values array
-/*  
+/*
   prev_proc_samp[index] = proc_samp;
-    
+	debug[index] = debug_sample;    
     index++;
-    if (index == 500){
+    if (index == 2000){
 	    index = 0;
 	}
 */	
+
+	
 
 
 	

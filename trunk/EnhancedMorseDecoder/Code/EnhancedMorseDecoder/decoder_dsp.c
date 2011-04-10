@@ -11,7 +11,8 @@
 #include "dsp.h"
 #include "math.h"
 
-#define WINDOW_FILTER_SIZE 64
+//#define WINDOW_FILTER_SIZE 64
+#define WINDOW_FILTER_SIZE 32
 
 static fractional sin_vals_frac[NUM_PTS];
 static fractional cos_vals_frac[NUM_PTS];
