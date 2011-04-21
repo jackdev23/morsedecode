@@ -1,9 +1,11 @@
-function [stringArray] = mag_detect_wave(iq, nl, genplots, Ts)
+function [stringArray] = mag_detect_wave(iq, nl, genplots, Ts, SpaceWidth)
 
 if nargin < 2
     genplots = 0;
+    SpaceWidth = 2.8;
 end
 
+ 
 iq = iq(:); % convert to column vector.
 sig.m  = iq; clear iq;
 sig.fm = nan(1,length(sig.m));
@@ -43,8 +45,9 @@ for s = 1:length(sig.m)
                 peak_power = sig.fm(s);
                 
 %                 if PC > 1 && r(PC) - f(PC-1) > 5*Tunit
-                 if PC > 1 && r(PC) - f(PC-1) > 3.5*Tunit
+%                  if PC > 1 && r(PC) - f(PC-1) > 3.5*Tunit
 %                 if PC > 1 && r(PC) - f(PC-1) > 2.1*Tunit
+                if PC > 1 && r(PC) - f(PC-1) > SpaceWidth*Tunit
 %                     fprintf(' / ');
                     stringArray = strcat(stringArray,'/');
                 end

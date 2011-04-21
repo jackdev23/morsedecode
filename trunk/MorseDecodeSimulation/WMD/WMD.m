@@ -22,7 +22,7 @@ function varargout = WMD(varargin)
 
 % Edit the above text to modify the response to help WMD
 
-% Last Modified by GUIDE v2.5 16-Apr-2011 13:13:19
+% Last Modified by GUIDE v2.5 21-Apr-2011 11:21:04
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -51,15 +51,16 @@ function WMD_OpeningFcn(hObject, eventdata, handles, varargin)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to WMD (see VARARGIN)
-global pathName fileName GuiDir fsig magnitude_value
+global pathName fileName GuiDir fsig magnitude_value hd SpaceWidth
 pathName = cd;
 GuiDir   = cd;
 fileName = '';
 fsig = 600;
-magnitude_value = -22;
+magnitude_value = -24;
 % Choose default command line output for WMD
 handles.output = hObject;
-
+load hd;
+SpaceWidth = 2.5;
 % Update handles structure
 guidata(hObject, handles);
 
@@ -145,7 +146,7 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global x fsample fsig fileName
+global x fsample fsig fileName hd SpaceWidth
 global GuiDir magnitude_value xn
 cd(GuiDir);
 %% DECIMATE
@@ -173,10 +174,7 @@ sigR = xn.*mixerR;
 sigI = xn.*mixerI;
 clear mixerI
 clear mixerR
-clear xn
-
-load hd % UNCOMMENT this if to use saved filter coefficients--> hd.mat 
-
+% clear xn
 
 set(handles.edit3,'String','Loaded Filter');
 %% Low Pass Filter - Simplified
@@ -202,10 +200,12 @@ title(fileName); xlabel('Signal'); ylabel('Samples');
 set(handles.edit3,'String','Complete');
 
 Ts = 1/fsample;
-[stringArray] = mag_detect_wave(fxn, magnitude_value, 1, Ts);
+[stringArray] = mag_detect_wave(fxn, magnitude_value, 1, Ts, SpaceWidth);
 set(handles.edit4,'String',stringArray);
 MorseString = morse_loopup(stringArray);
 set(handles.edit5,'String',MorseString);
+
+
 
 function edit2_Callback(hObject, eventdata, handles)
 % hObject    handle to edit2 (see GCBO)
@@ -354,3 +354,37 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global magnitude_value
 magnitude_value = str2double(get(handles.edit6,'String'));
+
+
+
+
+% --- Executes during object creation, after setting all properties.
+function edit7_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function edit7_Callback(hObject, eventdata, handles)
+% hObject    handle to edit7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit7 as text
+%        str2double(get(hObject,'String')) returns contents of edit7 as a double
+
+
+% --- Executes on button press in pushbutton5.
+function pushbutton5_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+global SpaceWidth
+SpaceWidth = str2double(get(handles.edit7,'String'));
